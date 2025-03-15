@@ -1,17 +1,30 @@
 <?php
 
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TodosController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect("todos");
+Route::get('/', action: function () {
+    return redirect("login");
 })->name("/");
 
 
+Route::get('/register', [RegisterController::class,"show"])->name("register");
+Route::post('/register', [RegisterController::class,"register"])->name("register");
+
+Route::get('/login', [LoginController::class,"show"])->name("login");
+Route::post('/login', [LoginController::class,"login"])->name("login");
+
+Route::get('/logout', [LoginController::class,"logout"])->name("logout");
+
+
+
+/// toDos
+
 //listado
 Route::get('/todos', [TodosController::class,"index"])->name("todos");
-
 //crear
 Route::post('/todos', [TodosController::class,"store"])->name("todos");
 
@@ -20,16 +33,14 @@ Route::patch('/todos/{id}', [TodosController::class,"update"])->name("todos-upda
 Route::delete('/todos/{id}', [TodosController::class,"destroy"])->name("todos-destroy");
 
 
-//categories
+///categories
+
 //Route::resource('categories', CategoriesController::class);//->names('categories');
 // Route::middleware(['web'])->group(function () {
 //     Route::resource('categories', CategoriesController::class);
 // });
-
-
-
 Route::get('/categories', [CategoriesController::class,"index"])->name("categories");
-
+//crear
 Route::post('/categories', [CategoriesController::class,"store"])->name("categories");
 
 Route::get('/categories/{id}', [CategoriesController::class,"show"])->name("categories-show");

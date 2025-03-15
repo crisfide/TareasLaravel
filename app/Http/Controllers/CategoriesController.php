@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Todo;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
@@ -13,8 +14,11 @@ class CategoriesController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {         
-        return view("categories.index",["categories"=>Category::all()]);
+    {
+        $user_id = auth()->user()->id;
+        $cats = Category::where("user_id","=",$user_id)->get();
+
+        return view("categories.index",["categories"=>$cats]);
     }
 
     /**
@@ -36,6 +40,7 @@ class CategoriesController extends Controller
         $cat = new Category();
         $cat->name = $request->name;
         $cat->color = $request->color;
+        $cat->user_id = auth()->user()->id;
         $cat->save();
 
         return redirect()->route("categories")->with("success","Categoría creada OK"); 
@@ -46,9 +51,17 @@ class CategoriesController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        $todos = Todo::all()->where("category_id","=",$id);
-        return view("categories.show",["category"=>Category::find($id), "todos"=>$todos]);
+    {        
+        // $request->validate([
+        //     'id' => 'exists:categories,id'
+        // ]);
+
+        $category = Category::where("id", $id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail(); // 404 si no existe
+
+        $todos = Todo::where("category_id","=",$id)->get();
+        return view("categories.show",["category"=>$category, "todos"=>$todos]);
     }
 
     /**

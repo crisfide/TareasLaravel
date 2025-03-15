@@ -9,6 +9,17 @@ use Illuminate\Http\Request;
 
 class TodosController extends Controller
 {
+
+
+    public function index() {
+        
+        $user_id = auth()->user()->id;
+        $todos = Todo::where("user_id","=",$user_id)->get();
+        $cats = Category::where("user_id","=",$user_id)->get();
+
+        return view("todos.index",["todos"=>$todos, "categories"=>$cats]);
+    }
+
     //insert
     public function store(Request $request)  {
         $request->validate([
@@ -20,6 +31,7 @@ class TodosController extends Controller
         $todo = new Todo();
         $todo->titulo = $request->titulo;
         $todo->category_id = $request->category_id;
+        $todo->user_id = auth()->user()->id;
         $todo->save();
 
         return redirect()->route("todos")->with("success","Tarea creada OK"); 
@@ -27,15 +39,21 @@ class TodosController extends Controller
     }
 
 
-    public function index() {
-        return view("todos.index",["todos"=>Todo::all(), "categories"=>Category::all()]);
-    }
 
 
 
     public function show($id) {
-        return view("todos.show",["todo"=>Todo::find($id), "categories"=>Category::all()]);
+
+        $todo = Todo::where("id", $id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail(); // 404 si no existe
+
+        $cats = Category::where("user_id","=",auth()->id())->get();
+
+        return view("todos.show",["todo"=>$todo, "categories"=>$cats]);
     }
+
+
     public function update(Request $request, $id) {
         $request->validate([
             "titulo"=>"required|min:3",
