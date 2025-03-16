@@ -21,3 +21,5 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+client_secret.json
+/config/google_auth/client_secret.json

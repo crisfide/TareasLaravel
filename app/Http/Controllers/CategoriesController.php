@@ -15,8 +15,9 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $user_id = auth()->user()->id;
-        $cats = Category::where("user_id","=",$user_id)->get();
+        // $user_id = auth()->user()->id;
+        // $cats = Category::where("user_id","=",$user_id)->get();
+        $cats = auth()->user()->categories;
 
         return view("categories.index",["categories"=>$cats]);
     }
@@ -60,8 +61,8 @@ class CategoriesController extends Controller
                 ->where('user_id', auth()->id())
                 ->firstOrFail(); // 404 si no existe
 
-        $todos = Todo::where("category_id","=",$id)->get();
-        return view("categories.show",["category"=>$category, "todos"=>$todos]);
+        //$todos = Todo::where("category_id","=",$id)->get();
+        return view("categories.show",["category"=>$category, "todos"=>$category->todos]);
     }
 
     /**

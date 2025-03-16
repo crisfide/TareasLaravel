@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TodosController;
@@ -46,3 +47,9 @@ Route::post('/categories', [CategoriesController::class,"store"])->name("categor
 Route::get('/categories/{id}', [CategoriesController::class,"show"])->name("categories-show");
 Route::patch('/categories/{id}', [CategoriesController::class,"update"])->name("categories-update");
 Route::delete('/categories/{id}', [CategoriesController::class,"destroy"])->name("categories-destroy");
+
+
+
+Route::get('/g', [GoogleAuthController::class,"getAuthUrl"])->name("g");
+
+Route::get("oauth2callback",[GoogleAuthController::class,"callback"])->name("googleCallback");

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Todo;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TodosController extends Controller
@@ -14,8 +15,10 @@ class TodosController extends Controller
     public function index() {
         
         $user_id = auth()->user()->id;
-        $todos = Todo::where("user_id","=",$user_id)->get();
-        $cats = Category::where("user_id","=",$user_id)->get();
+        //$todos = Todo::where("user_id","=",$user_id)->get();
+        //$cats = Category::where("user_id","=",$user_id)->get();
+        $todos = auth()->user()->todos;
+        $cats = auth()->user()->categories;
 
         return view("todos.index",["todos"=>$todos, "categories"=>$cats]);
     }
@@ -48,7 +51,9 @@ class TodosController extends Controller
                 ->where('user_id', auth()->id())
                 ->firstOrFail(); // 404 si no existe
 
-        $cats = Category::where("user_id","=",auth()->id())->get();
+        //$cats = Category::where("user_id","=",auth()->id())->get();
+        $user = User::find(auth()->id());
+        $cats = auth()->user()->categories;
 
         return view("todos.show",["todo"=>$todo, "categories"=>$cats]);
     }
