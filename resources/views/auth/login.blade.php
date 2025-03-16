@@ -32,6 +32,9 @@
         </form>
         <br>
         @include("auth.google")
+        <br>
+        <br>
+        @include("auth.fb")
     </div>
 
 

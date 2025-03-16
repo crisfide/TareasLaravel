@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Google\Client;
+use Google\Service\Oauth2;
 use App\Models\User;
 use Str;
 
@@ -72,6 +74,12 @@ class GoogleAuthController extends Controller
 
         */
         
+        if ($request->error || !$request->code) {
+            return redirect("login")
+                ->withErrors(["auth.fail"=>"$request->error"]);
+
+        }
+
         $client = new Client();
         $client->setAuthConfig(base_path('config\google_auth\client_secret.json'));
 
@@ -91,7 +99,7 @@ class GoogleAuthController extends Controller
 
         $refresh_token = $client->getRefreshToken();
 
-        $oauth = new \Google\Service\Oauth2($client);
+        $oauth = new Oauth2($client);
         $userInfo = $oauth->userinfo->get();
 
         $id = $userInfo->id;
@@ -102,10 +110,9 @@ class GoogleAuthController extends Controller
 
         $user = User::where("email",$email)->firstOrCreate(
             ["email"=>$email],
-            ["name"=>$name,"email"=>$email,"password"=>Str::random(6)]
+            ["name"=>$name,"email"=>$email,"password"=>null]
         );
 
-        //$user = Auth::getProvider()->retrieveByCredentials($credentials);
         Auth::login($user);
 
         return redirect("todos");
