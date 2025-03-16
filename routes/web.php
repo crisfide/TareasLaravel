@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\FbAuthController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -51,5 +52,7 @@ Route::delete('/categories/{id}', [CategoriesController::class,"destroy"])->name
 
 
 Route::get('/g', [GoogleAuthController::class,"getAuthUrl"])->name("g");
-
 Route::get("oauth2callback",[GoogleAuthController::class,"callback"])->name("googleCallback");
+
+Route::get('/f', [FbAuthController::class,"getAuthUrl"])->name("f");
+Route::get("/fbCallback",[FbAuthController::class,"callback"])->name("fbCallback");
